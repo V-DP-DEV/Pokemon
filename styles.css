@@ -37,6 +37,7 @@ tr:nth-child(even) {
 .tablesHorizontally{
     float:left;
     margin-right: 20px;
+    margin-bottom: 15px;
 }
 .sprites{
     width: 150px;
