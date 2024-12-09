@@ -34,11 +34,30 @@ tr:nth-child(even) {
     display: flex;
     flex-direction: row;
 }
+
+.container{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
 .tablesHorizontally{
-    float:left;
+    float:right;
     margin-right: 20px;
     margin-bottom: 15px;
 }
+
+.tablesNew{
+    flex: 1 1 30%;
+    margin: 10px;
+}
+
+@media (max-width:768px){
+    .tablesNew{
+        flex: 1 1 100%;
+    }
+}
+
 .sprites{
     width: 150px;
     height: 150px;
