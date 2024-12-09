@@ -38,17 +38,25 @@ async function main(){
     await fillDiscovery();
     buttonElement.addEventListener("click", async function(){
         text = textElement.value;
-        obj = await getPokemonData(text.toLowerCase());
+        loadDataIntoElements(text.toLowerCase);
+        /*obj = await getPokemonData(text.toLowerCase());
         const res = await fetch("https://pokeapi.co/api/v2/pokemon-species/"+ obj.id+"/");
         obj2 = await res.json();
         console.log(obj);
         console.log(obj2);
         loadDataIntoElements();
+        */
     });
 }
 
-function loadDataIntoElements(){
+async function loadDataIntoElements(nameOrId){
     clearData();
+    obj = await getPokemonData(nameOrId);
+    const res = await fetch("https://pokeapi.co/api/v2/pokemon-species/"+ obj.id+"/");
+    obj2 = await res.json();
+    console.log(obj);
+    console.log(obj2);
+
     weight.innerHTML = "Weight: "+ obj.weight;
     height.innerHTML = "Height: " + obj.height;
     pokemonName.innerHTML = obj.species.name+ " ["+obj.id+"]";
@@ -90,7 +98,12 @@ async function fillDiscovery(){
     tempBlock.appendChild(tempStr);
     tempBlock.appendChild(tempTypes);
     for(let i = 1; i < 1000; i++){
-        discovery.appendChild(tempBlock.cloneNode(true))
+        let copy = tempBlock.cloneNode(true);
+        copy.children[0].addEventListener("click",function(){
+            alert("A new pokemon has been selected")
+            loadDataIntoElements(i);
+        })
+        discovery.appendChild(copy)
     }
     for(let i = 1; i < 1000; i++){
         pokemonToDiscovery(i)
