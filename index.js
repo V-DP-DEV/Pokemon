@@ -38,7 +38,7 @@ async function main(){
     await fillDiscovery();
     buttonElement.addEventListener("click", async function(){
         text = textElement.value;
-        loadDataIntoElements(text.toLowerCase);
+        loadDataIntoElements(text.toLowerCase());
         /*obj = await getPokemonData(text.toLowerCase());
         const res = await fetch("https://pokeapi.co/api/v2/pokemon-species/"+ obj.id+"/");
         obj2 = await res.json();
