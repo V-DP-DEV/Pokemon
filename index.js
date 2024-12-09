@@ -72,14 +72,14 @@ function loadDataIntoElements(){
 }
 
 async function fillDiscovery(){
-    const res = await fetch("https://pokeapi.co/api/v2/pokemon/?limit=1300");
+    const res = await fetch("https://pokeapi.co/api/v2/pokemon/?limit=40");
     pokemons = await res.json();
     console.log(pokemons)
 
     let tempType = document.createElement("label");
     tempType.classList.add('types')
 
-    for(let i = 0; i < 1300; i++){
+    for(let i = 0; i < 40; i++){
         let newRow = discovery.insertRow(-1);
         let celImage = newRow.insertCell(-1);
         let celId = newRow.insertCell(-1);
