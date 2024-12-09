@@ -35,7 +35,8 @@ tr:nth-child(even) {
     flex-direction: row;
 }
 .tablesHorizontally{
-    margin-right: 100px;
+    float:left;
+    margin-left: 50px;
 }
 .sprites{
     width: 150px;
