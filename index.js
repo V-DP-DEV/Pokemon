@@ -29,6 +29,8 @@ const hatch_counter = document.getElementById("hatch_counter");
 const gender_rate = document.getElementById("gender_rate")
 const discovery = document.getElementById("discovery")
 
+const test = document.getElementById("test");
+
 let maleIntervalId;
 let shinyIntervalId;
 
@@ -71,46 +73,44 @@ function loadDataIntoElements(){
     shinyIntervalId =rotateBetweenImages(obj.sprites.back_default,obj.sprites.back_shiny,maleShinyImg)
 }
 
+let tempType = document.createElement("label");
+tempType.classList.add('types')
+
 async function fillDiscovery(){
-    const res = await fetch("https://pokeapi.co/api/v2/pokemon/?limit=40");
-    pokemons = await res.json();
-    console.log(pokemons)
+    let tempBlock = document.createElement("div");
+    tempBlock.classList.add("discoverBlock");
+    let tempImg = document.createElement("img");
+    let tempId = document.createElement("div");
+    let tempName = document.createElement("div");
+    let tempStr = document.createElement("div");
+    let tempTypes = document.createElement("div");
+    tempBlock.appendChild(tempImg);
+    tempBlock.appendChild(tempId);
+    tempBlock.appendChild(tempName);
+    tempBlock.appendChild(tempStr);
+    tempBlock.appendChild(tempTypes);
+    for(let i = 1; i < 1000; i++){
+        discovery.appendChild(tempBlock.cloneNode(true))
+    }
+    for(let i = 1; i < 1000; i++){
+        pokemonToDiscovery(i)
+    }
+}
 
-    let tempType = document.createElement("label");
-    tempType.classList.add('types')
-
-    for(let i = 0; i < 40; i++){
-        let newRow = discovery.insertRow(-1);
-        let celImage = newRow.insertCell(-1);
-        let celId = newRow.insertCell(-1);
-        let celBaseTotal = newRow.insertCell(-1);
-        let celGeneration = newRow.insertCell(-1);                                              
-        let celTypes = newRow.insertCell(-1);
-
-        const res2 = await fetch(pokemons.results[i].url);
-        currentPokemon = await res2.json();
-
-        newRow.addEventListener("click",async function(){
-            obj = await getPokemonData(celId.innerHTML);
-            const res = await fetch("https://pokeapi.co/api/v2/pokemon-species/"+ celId.innerHTML+"/");
-            obj2 = await res.json();
-            console.log(obj);
-            console.log(obj2);
-            loadDataIntoElements();
-            alert("A new pokemon has been selected")
-        })
-        let currentSprite = document.createElement("img");
-        currentSprite.src = currentPokemon.sprites.front_default
-        celImage.appendChild(currentSprite);
-        celId.innerHTML = currentPokemon.id;
-
-        celBaseTotal.innerHTML = (currentPokemon.stats[0].base_stat+currentPokemon.stats[1].base_stat+currentPokemon.stats[2].base_stat+currentPokemon.stats[3].base_stat+currentPokemon.stats[4].base_stat+currentPokemon.stats[5].base_stat);
-        for (let i = 0; i <  currentPokemon.types.length ; i++) {
-            let currentType= tempType.cloneNode(true);
-            currentType.innerHTML = currentPokemon.types[i].type.name;
-            currentType.classList.add(currentPokemon.types[i].type.name)
-            celTypes.appendChild(currentType);
-        }
+//used to speed up the system
+async function pokemonToDiscovery(id){
+    const res2 = await fetch("https://pokeapi.co/api/v2/pokemon/"+(id));
+    currentPokemon = await res2.json();
+    let copy = discovery.children[id-1];
+    copy.children[0].src = currentPokemon.sprites.front_default;
+    copy.children[1].innerHTML = "#" + currentPokemon.id;
+    copy.children[2].innerHTML = currentPokemon.name;
+    copy.children[3].innerHTML = "Str:  " + (currentPokemon.stats[0].base_stat+currentPokemon.stats[1].base_stat+currentPokemon.stats[2].base_stat+currentPokemon.stats[3].base_stat+currentPokemon.stats[4].base_stat+currentPokemon.stats[5].base_stat)
+    for (let i = 0; i <  currentPokemon.types.length ; i++) {
+        let currentType= tempType.cloneNode(true);
+        currentType.innerHTML = currentPokemon.types[i].type.name;
+        currentType.classList.add(currentPokemon.types[i].type.name)
+        copy.children[4].appendChild(currentType);
     }
 }
 

@@ -35,6 +35,11 @@ tr:nth-child(even) {
     flex-direction: row;
 }
 
+.discoverBlock{
+    margin: 5px;
+    text-align: center;
+}
+
 .container{
     display: flex;
     flex-wrap: wrap;
