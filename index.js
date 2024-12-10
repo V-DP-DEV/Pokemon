@@ -71,6 +71,10 @@ async function loadDataIntoElements(nameOrId){
     obj2 = await res.json();
     console.log(obj);
     console.log(obj2);
+    const res2 = await fetch("https://pokeapi.co/api/v2/evolution-chain/10/");
+    let obj3 = await res2.json();
+    console.log(obj3)
+    
 
     weight.innerHTML = "Weight: "+ obj.weight;
     height.innerHTML = "Height: " + obj.height;
@@ -83,7 +87,8 @@ async function loadDataIntoElements(nameOrId){
     special_defense.innerHTML = obj.stats[4].base_stat;
     speed.innerHTML = obj.stats[5].base_stat;
     baseTotal.innerHTML = (obj.stats[0].base_stat+ obj.stats[1].base_stat + obj.stats[2].base_stat + obj.stats[3].base_stat + obj.stats[4].base_stat + obj.stats[5].base_stat)
-    description.innerHTML = "Description: "+ extract(obj2.flavor_text_entries[1].flavor_text);
+    //description.innerHTML = "Description: "+ extract(obj2.flavor_text_entries[1].flavor_text);
+    description.innerHTML = "Description: "+ extract(obj2.flavor_text_entries[getEnglish(obj2.flavor_text_entries)].flavor_text);
     generation.innerHTML = "Added in " + obj2.generation.name
     happiness.innerHTML = obj2.base_happiness
     capture_rate.innerHTML = obj2.capture_rate;
@@ -169,6 +174,14 @@ function setGender(){
     }
 }
 
+function getEnglish(object){
+    for(let i = 0; i < object.length ; i++){
+        if (object[i].language.name == "en"){
+            return i;
+        }
+    }
+}
+
 function clearData(){
     deleteAbilities();
     if(maleIntervalId != null){
@@ -189,7 +202,7 @@ async function addAbilities(){
         ability = await res.json();
         console.log(ability);
         cel1.innerHTML = ability.name;
-        cel2.innerHTML = ability.effect_entries[1].short_effect;
+        cel2.innerHTML = ability.effect_entries[getEnglish(ability.effect_entries)].short_effect;
     }
 }
 
