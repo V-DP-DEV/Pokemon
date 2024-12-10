@@ -42,7 +42,7 @@ async function main(){
     const res = await fetch("https://pokeapi.co/api/v2/generation/2");
     obj = await res.json();
     console.log(obj);
-    await fillDiscovery(4);
+    await fillDiscovery(1);
     buttonElement.addEventListener("click", async function(){
         text = textElement.value;
         loadDataIntoElements(text.toLowerCase());
@@ -148,8 +148,9 @@ async function pokemonToDiscovery(id,generationFirstId){
 
 function  createGenerationPicker(){
     for(let i = 1; i <= 9; i++){
-        let newLabel = document.createElement("label");
+        let newLabel = document.createElement("button");
         newLabel.innerHTML = i;
+        newLabel.classList.add("generationButton")
         newLabel.addEventListener("click",function(){
             discovery.innerHTML = ""
             fillDiscovery(i);

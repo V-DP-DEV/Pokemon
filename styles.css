@@ -47,6 +47,11 @@ tr:nth-child(even) {
     width: 100%;
 }
 
+.generationButton{
+    width: 40px;
+    margin: 7px
+}
+
 .tablesHorizontally{
     float:right;
     margin-right: 20px;
