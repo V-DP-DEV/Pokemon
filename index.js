@@ -76,8 +76,8 @@ async function loadDataIntoElements(nameOrId){
     console.log(obj3)
     
 
-    weight.innerHTML = "Weight: "+ obj.weight;
-    height.innerHTML = "Height: " + obj.height;
+    weight.innerHTML = "Weight: "+ (obj.weight/10) + " kg";
+    height.innerHTML = "Height: " + (obj.height/10) + " m";
     pokemonName.innerHTML = obj.species.name+ " ["+obj.id+"]";
     base_exp.innerHTML = obj.base_experience;
     hp.innerHTML = obj.stats[0].base_stat;
