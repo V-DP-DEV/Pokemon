@@ -29,24 +29,39 @@ const hatch_counter = document.getElementById("hatch_counter");
 const gender_rate = document.getElementById("gender_rate")
 const discovery = document.getElementById("discovery")
 
-const test = document.getElementById("test");
+const generation_picker = document.getElementById("generation_picker")
+
+
+let generations = [];
 
 let maleIntervalId;
 let shinyIntervalId;
 
 async function main(){
-    await fillDiscovery();
+    await populateGenerations();
+    const res = await fetch("https://pokeapi.co/api/v2/generation/2");
+    obj = await res.json();
+    console.log(obj);
+    await fillDiscovery(4);
     buttonElement.addEventListener("click", async function(){
         text = textElement.value;
         loadDataIntoElements(text.toLowerCase());
-        /*obj = await getPokemonData(text.toLowerCase());
-        const res = await fetch("https://pokeapi.co/api/v2/pokemon-species/"+ obj.id+"/");
-        obj2 = await res.json();
-        console.log(obj);
-        console.log(obj2);
-        loadDataIntoElements();
-        */
     });
+    createGenerationPicker();
+}
+
+async function populateGenerations(){
+    const res = await fetch("https://pokeapi.co/api/v2/generation");
+    generationsData = await res.json();
+    let total = 0
+    generations[0] = 0;
+    for(let i = 1; i <= generationsData.count; i++ ){
+        const res2 = await fetch("https://pokeapi.co/api/v2/generation/"+i+"");
+        generationData = await res2.json();
+        total += generationData.pokemon_species.length;
+        generations[i] = total;
+    }
+    console.log(generations)
 }
 
 async function loadDataIntoElements(nameOrId){
@@ -84,7 +99,7 @@ async function loadDataIntoElements(nameOrId){
 let tempType = document.createElement("label");
 tempType.classList.add('types')
 
-async function fillDiscovery(){
+async function fillDiscovery(a){
     let tempBlock = document.createElement("div");
     tempBlock.classList.add("discoverBlock");
     let tempImg = document.createElement("img");
@@ -97,7 +112,11 @@ async function fillDiscovery(){
     tempBlock.appendChild(tempName);
     tempBlock.appendChild(tempStr);
     tempBlock.appendChild(tempTypes);
-    for(let i = 1; i < 1000; i++){
+
+    let begin = generations[a-1]+1;
+    let end = generations[a];
+    for(let i = begin; i <= end; i++){
+        console.log(i);
         let copy = tempBlock.cloneNode(true);
         copy.children[0].addEventListener("click",function(){
             alert("A new pokemon has been selected")
@@ -105,16 +124,16 @@ async function fillDiscovery(){
         })
         discovery.appendChild(copy)
     }
-    for(let i = 1; i < 1000; i++){
-        pokemonToDiscovery(i)
+    for(let i = begin; i <= end; i++){
+        pokemonToDiscovery(i,begin)
     }
 }
 
 //used to speed up the system
-async function pokemonToDiscovery(id){
+async function pokemonToDiscovery(id,generationFirstId){
     const res2 = await fetch("https://pokeapi.co/api/v2/pokemon/"+(id));
     currentPokemon = await res2.json();
-    let copy = discovery.children[id-1];
+    let copy = discovery.children[id-generationFirstId];
     copy.children[0].src = currentPokemon.sprites.front_default;
     copy.children[1].innerHTML = "#" + currentPokemon.id;
     copy.children[2].innerHTML = currentPokemon.name;
@@ -124,6 +143,18 @@ async function pokemonToDiscovery(id){
         currentType.innerHTML = currentPokemon.types[i].type.name;
         currentType.classList.add(currentPokemon.types[i].type.name)
         copy.children[4].appendChild(currentType);
+    }
+}
+
+function  createGenerationPicker(){
+    for(let i = 1; i <= 9; i++){
+        let newLabel = document.createElement("label");
+        newLabel.innerHTML = i;
+        newLabel.addEventListener("click",function(){
+            discovery.innerHTML = ""
+            fillDiscovery(i);
+        })
+        generation_picker.appendChild(newLabel);
     }
 }
 
