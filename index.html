@@ -14,76 +14,76 @@
     <body>
         <div class = "topBar">
             <label style = "color:rgb(228, 228, 228)">Pokemon name</label><br>
-            <input type = "text" id = "pokemonName" style="background-color: grey; color: rgb(218, 218, 218)">
-            <button id = "button1" style="background-color: grey;color: rgb(218, 218, 218)" >Search pokemon</button><br><br>
+            <input type = "text" id = "searchInput" style="background-color: grey; color: rgb(218, 218, 218)">
+            <button id = "searchButton" style="background-color: grey;color: rgb(218, 218, 218)" >Search pokemon</button><br><br>
         </div>
         <div class = "center">
             <h1 id = "pokemon">name</h1>
-            <img class = "sprites" src = "" id = "maleImage">
-            <img class = "sprites" src = "" id = "maleShinyImage"><br>
+            <img class = "sprites" src = "" id = "frontImage">
+            <img class = "sprites" src = "" id = "backImage"><br>
             <label id = "description">Description:</label><br>
             <label id = "weight">Weight:</label><br>
             <label id = "height">Height:</label><br>
             <label id = "generation">Added in</label><br>
             <label id = "types">Types: </label><br><br><br><br>
                 <div class = "container">
-                <table class = "tablesNew">
+                <table class = "tablesNew" id = "battleStats">
                     <tr>
                         <th>Battle stats</th>
                         <th>Value</th>
                     </tr>
                     <tr>
                         <td>Hp</td>
-                        <td id ="hp"></th>
+                        <td></th>
                     </tr>
                     <tr>
                         <td>Attack</td>
-                        <td id ="attack"></th>
+                        <td></th>
                     </tr>
                     <tr>
                         <td>Defense</td>
-                        <td id ="defense"></th>
+                        <td></th>
                     </tr>
                     <tr>
                         <td>Special attack</td>
-                        <td id ="special_attack"></th>
+                        <td></th>
                     </tr>
                     <tr>
                         <td>Special defense</td>
-                        <td id ="special_defense"></th>
+                        <td></th>
                     </tr>
                     <tr>
                         <td>Speed</td>
-                        <td id ="speed"></th>
+                        <td></th>
                     </tr>
                     <tr>
                         <th>Base total</th>
-                        <td id ="base_total"></th>
+                        <td></th>
                     </tr>
                 </table>
-                <table class="tablesNew">
+                <table class="tablesNew" id = "trainingStats">
                     <tr>
                         <th>Training stats</th>
                         <th>Value</th>
                     </tr>
                     <tr>
                         <td>Capture rate</td>
-                        <td id ="capture_rate"></th>
+                        <td></th>
                     </tr>
                     <tr>
                         <td>Growth rate</td>
-                        <td id ="growth_rate"></th>
+                        <td></th>
                     </tr>
                     <tr>
                         <td>Happiness</td>
-                        <td id ="happiness"></th>
+                        <td></th>
                     </tr>
                     <tr>
                         <td>Base exp</td>
-                        <td id = "base_experience"></th>
+                        <td></th>
                     </tr>
                 </table>
-            <table class="tablesNew">
+            <table class="tablesNew" id = "breedingStats">
                 <tr>
                     <th>Breading stats</th>
                     <th>Value</th>
@@ -94,11 +94,11 @@
                 </tr>
                 <tr>
                     <td>Egg cycles</td>
-                    <td id = "hatch_counter"></td>
+                    <td></td>
                 </tr>
                 <tr>
                     <td>Gender</td>
-                    <td id = "gender_rate"></td>
+                    <td></td>
                 </tr>
             </table>
             </div>
