@@ -30,6 +30,14 @@ const gender_rate = document.getElementById("gender_rate")
 const discovery = document.getElementById("discovery")
 
 const generation_picker = document.getElementById("generation_picker")
+const load_more = document.getElementById("load_more")
+
+const generation_header = document.getElementById("generation_header")
+
+let increment = 30;
+let totalPokemonLoaded = 0;
+let totalPokemonInGeneration;
+let firstIdInGeneration;
 
 
 let generations = [];
@@ -42,7 +50,9 @@ async function main(){
     const res = await fetch("https://pokeapi.co/api/v2/generation/2");
     obj = await res.json();
     console.log(obj);
-    await fillDiscovery(1);
+    //await fillDiscovery(1);
+    await setDiscoveryGeneration(1);
+    await loadBatchPokemon();
     buttonElement.addEventListener("click", async function(){
         text = textElement.value;
         loadDataIntoElements(text.toLowerCase());
@@ -87,7 +97,6 @@ async function loadDataIntoElements(nameOrId){
     special_defense.innerHTML = obj.stats[4].base_stat;
     speed.innerHTML = obj.stats[5].base_stat;
     baseTotal.innerHTML = (obj.stats[0].base_stat+ obj.stats[1].base_stat + obj.stats[2].base_stat + obj.stats[3].base_stat + obj.stats[4].base_stat + obj.stats[5].base_stat)
-    //description.innerHTML = "Description: "+ extract(obj2.flavor_text_entries[1].flavor_text);
     description.innerHTML = "Description: "+ extract(obj2.flavor_text_entries[getEnglish(obj2.flavor_text_entries)].flavor_text);
     generation.innerHTML = "Added in " + obj2.generation.name
     happiness.innerHTML = obj2.base_happiness
@@ -104,20 +113,37 @@ async function loadDataIntoElements(nameOrId){
 let tempType = document.createElement("label");
 tempType.classList.add('types')
 
-async function fillDiscovery(a){
-    let tempBlock = document.createElement("div");
-    tempBlock.classList.add("discoverBlock");
-    let tempImg = document.createElement("img");
-    let tempId = document.createElement("div");
-    let tempName = document.createElement("div");
-    let tempStr = document.createElement("div");
-    let tempTypes = document.createElement("div");
-    tempBlock.appendChild(tempImg);
-    tempBlock.appendChild(tempId);
-    tempBlock.appendChild(tempName);
-    tempBlock.appendChild(tempStr);
-    tempBlock.appendChild(tempTypes);
+async function setDiscoveryGeneration(a){
+    totalPokemonLoaded = 0;
+    totalPokemonInGeneration = generations[a]- generations[a-1];
+    firstIdInGeneration = generations[a-1]+1;
+    load_more.style.display = "block";
+    generation_header.innerHTML = "Generation " + a;
+}
 
+async function loadBatchPokemon(){
+    let begin = totalPokemonLoaded+firstIdInGeneration;
+    let end = totalPokemonLoaded+increment+firstIdInGeneration-1;
+    if ( (end-firstIdInGeneration+1) > totalPokemonInGeneration){
+        end = totalPokemonInGeneration+firstIdInGeneration-1;
+        load_more.style.display = "none";
+    }
+    for(let i = begin; i <= end; i++){
+        console.log(i);
+        let copy = tempBlock.cloneNode(true);
+        copy.children[0].addEventListener("click",function(){
+            alert("A new pokemon has been selected")
+            loadDataIntoElements(i);
+        })
+        discovery.appendChild(copy)
+    }
+    for(let i = begin; i <= end; i++){
+        pokemonToDiscovery(i,firstIdInGeneration)
+    }
+    totalPokemonLoaded += increment;
+}
+
+async function fillDiscovery(a){
     let begin = generations[a-1]+1;
     let end = generations[a];
     for(let i = begin; i <= end; i++){
@@ -158,7 +184,8 @@ function  createGenerationPicker(){
         newLabel.classList.add("generationButton")
         newLabel.addEventListener("click",function(){
             discovery.innerHTML = ""
-            fillDiscovery(i);
+            setDiscoveryGeneration(i);
+            loadBatchPokemon();
         })
         generation_picker.appendChild(newLabel);
     }
@@ -281,5 +308,23 @@ async function getPokemonData(name){
     const obj = await res.json();
     return obj
 }
+
+let tempBlock = document.createElement("div");
+tempBlock.classList.add("discoverBlock");
+let tempImg = document.createElement("img");
+let tempId = document.createElement("div");
+let tempName = document.createElement("div");
+let tempStr = document.createElement("div");
+let tempTypes = document.createElement("div");
+tempBlock.appendChild(tempImg);
+tempBlock.appendChild(tempId);
+tempBlock.appendChild(tempName);
+tempBlock.appendChild(tempStr);
+tempBlock.appendChild(tempTypes);
+
+
+load_more.addEventListener("click",function(){
+    loadBatchPokemon();
+})
 
 main();
