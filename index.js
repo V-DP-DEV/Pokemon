@@ -17,12 +17,17 @@ const battleStats = document.getElementById("battleStats");
 const trainingStats = document.getElementById("trainingStats");
 const breedingStats = document.getElementById("breedingStats")
 
+const femaleLabel = breedingStats.rows[3].cells[1].children[1];
+const maleLabel = breedingStats.rows[3].cells[1].children[0];
+const genderlessLabel = breedingStats.rows[3].cells[1].children[2];
+
 const abilityTable = document.getElementById("ability_table");
 
 const discovery = document.getElementById("discovery")
 const generation_picker = document.getElementById("generation_picker")
 const load_more = document.getElementById("load_more")
 const generation_header = document.getElementById("generation_header")
+const evolves_from = document.getElementById("evolves_from")
 
 let increment = 30;
 let totalPokemonLoaded = 0;
@@ -129,18 +134,21 @@ async function loadBatchPokemon(){
 }
 
 async function pokemonToDiscovery(id,generationFirstId){
+    loadPokemonIntoBlock(id,discovery.children[id-generationFirstId]);
+}
+
+async function loadPokemonIntoBlock(id, block){
     const res2 = await fetch("https://pokeapi.co/api/v2/pokemon/"+(id));
     currentPokemon = await res2.json();
-    let copy = discovery.children[id-generationFirstId];
-    copy.children[0].src = currentPokemon.sprites.front_default;
-    copy.children[1].innerHTML = "#" + currentPokemon.id;
-    copy.children[2].innerHTML = currentPokemon.name;
-    copy.children[3].innerHTML = "Str:  " + (currentPokemon.stats[0].base_stat+currentPokemon.stats[1].base_stat+currentPokemon.stats[2].base_stat+currentPokemon.stats[3].base_stat+currentPokemon.stats[4].base_stat+currentPokemon.stats[5].base_stat)
+    block.children[0].src = currentPokemon.sprites.front_default;
+    block.children[1].innerHTML = "#" + currentPokemon.id;
+    block.children[2].innerHTML = currentPokemon.name;
+    block.children[3].innerHTML = "Str:  " + (currentPokemon.stats[0].base_stat+currentPokemon.stats[1].base_stat+currentPokemon.stats[2].base_stat+currentPokemon.stats[3].base_stat+currentPokemon.stats[4].base_stat+currentPokemon.stats[5].base_stat)
     for (let i = 0; i <  currentPokemon.types.length ; i++) {
         let currentType= tempType.cloneNode(true);
         currentType.innerHTML = currentPokemon.types[i].type.name;
         currentType.classList.add(currentPokemon.types[i].type.name)
-        copy.children[4].appendChild(currentType);
+        block.children[4].appendChild(currentType);
     }
 }
 
@@ -173,7 +181,9 @@ async function loadDataIntoElements(nameOrId){
     console.log(obj);
     console.log(obj2);
 
-    pokemonName.innerHTML = obj.species.name+ " ["+obj.id+"]";
+    let name = obj.species.name[0].toUpperCase()+obj.species.name.substr(1,obj.species.name.length);
+
+    pokemonName.innerHTML = name + " #"+obj.id;
     description.innerHTML = "Description: "+ extract(obj2.flavor_text_entries[getEnglishStr(obj2.flavor_text_entries)].flavor_text);
     weight.innerHTML = "Weight: "+ (obj.weight/10) + " kg";
     height.innerHTML = "Height: " + (obj.height/10) + " m";
@@ -199,15 +209,25 @@ async function loadDataIntoElements(nameOrId){
     breedingStats.rows[2].cells[1].innerHTML = obj2.hatch_counter;
     setGender();
     addAbilities();
+    addEvulotionChain();
 }
 
 function setGender(){
     let rate = obj2.gender_rate;
+
+    maleLabel.innerHTML = "";
+    femaleLabel.innerHTML = "";
+    genderlessLabel.innerHTML = "";
+
     if (rate == -1){
-        breedingStats.rows[3].cells[1].innerHTML = "Genderless";
+        genderlessLabel.innerHTML = "Genderless";
+        //breedingStats.rows[3].cells[1].innerHTML = "Genderless";
+        //breedingStats.rows[3].cells[1].children[2].innerHTML = "Genderless";
     }
     else{
-        breedingStats.rows[3].cells[1].innerHTML = rate;
+        maleLabel.innerHTML = ((8 - rate)*12.5) + "% male";
+        femaleLabel.innerHTML = (rate*12.5)+ "% female  "
+        //breedingStats.rows[3].cells[1].innerHTML = rate;
     }
 }
 
@@ -216,6 +236,7 @@ function clearData(){
     if(maleIntervalId != null){clearInterval(maleIntervalId)}
     if(shinyIntervalId != null){clearInterval(shinyIntervalId)}
     types.innerHTML = "";
+    evolves_from.innerHTML = "";
 }
 
 async function addAbilities(){
@@ -225,10 +246,45 @@ async function addAbilities(){
         let cel2 = row.insertCell(-1);
         const res = await fetch(obj.abilities[i].ability.url);
         ability = await res.json();
-        console.log(ability);
         cel1.innerHTML = ability.name;
         cel2.innerHTML = ability.effect_entries[getEnglishStr(ability.effect_entries)].short_effect;
     }
+}
+
+async function addEvulotionChain(){
+    const res = await fetch(obj2.evolution_chain.url);
+    let evoChain = await res.json();
+    console.log("Evolutions")
+    //console.log(targetName);
+    addEvolvesFrom();
+    console.log(getTargetInEvoChain(evoChain.chain));
+}
+
+function addEvolvesFrom(){
+    if (obj2.evolves_from_species != null){
+        console.log(obj2.evolves_from_species.name) 
+        let block = tempBlock.cloneNode(true);
+        loadPokemonIntoBlock(obj2.evolves_from_species.name,block);
+        evolves_from.appendChild(block);
+    }
+}
+
+function addEvolvesTo(){
+
+}
+
+function getTargetInEvoChain(beginPokemon){
+    let targetName = obj.name;
+    if (targetName == beginPokemon.species.name){
+        return beginPokemon;
+    }
+    for (let i = 0; i < beginPokemon.evolves_to.length;i++){
+        recursiveResult = getTargetInEvoChain(beginPokemon.evolves_to[i]);
+        if (recursiveResult != null){
+            return recursiveResult;
+        }
+    }
+    return null;
 }
 
 function deleteAbilities(){

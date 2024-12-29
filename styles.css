@@ -19,7 +19,7 @@ table, th, td {
   padding-right: 10px;
 }
 tr:nth-child(even) {
-    background-color: #f2f2f2;
+    background: #f2f2f2;
 }
 .center {
     background-color: white;
