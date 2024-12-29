@@ -35,6 +35,10 @@ tr:nth-child(even) {
     flex-direction: row;
 }
 
+.generationPicker{
+    text-align: center;
+}
+
 .discoverBlock{
     margin: 5px;
     text-align: center;
