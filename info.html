@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="styles.css">
+        
+        </style>
+        
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content=""> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+        <div class = "topBar">
+            <label style = "color:rgb(228, 228, 228)">Pokemon name</label><br>
+            <input type = "text" id = "searchInput" style="background-color: grey; color: rgb(218, 218, 218)">
+            <button id = "searchButton" style="background-color: grey;color: rgb(218, 218, 218)" >Search pokemon</button><br><br>
+        </div>
+        <div class = "center">
+            <h1 id = "pokemon">name</h1>
+            <img class = "sprites" src = "" id = "frontImage">
+            <img class = "sprites" src = "" id = "backImage"><br>
+            <label id = "description">Description:</label><br>
+            <label id = "weight">Weight:</label><br>
+            <label id = "height">Height:</label><br>
+            <label id = "generation">Added in</label><br>
+            <label id = "types">Types: </label><br><br><br><br>
+            <h2 id = "evolves_from">Evolves from </h2>
+            <h2>Evolves to</h2>
+                <div class = "container">
+                <table class = "tablesNew" id = "battleStats">
+                    <tr>
+                        <th>Battle stats</th>
+                        <th>Value</th>
+                    </tr>
+                    <tr>
+                        <td>Hp</td>
+                        <td></th>
+                    </tr>
+                    <tr>
+                        <td>Attack</td>
+                        <td></th>
+                    </tr>
+                    <tr>
+                        <td>Defense</td>
+                        <td></th>
+                    </tr>
+                    <tr>
+                        <td>Special attack</td>
+                        <td></th>
+                    </tr>
+                    <tr>
+                        <td>Special defense</td>
+                        <td></th>
+                    </tr>
+                    <tr>
+                        <td>Speed</td>
+                        <td></th>
+                    </tr>
+                    <tr>
+                        <th>Base total</th>
+                        <td></th>
+                    </tr>
+                </table>
+                <table class="tablesNew" id = "trainingStats">
+                    <tr>
+                        <th>Training stats</th>
+                        <th>Value</th>
+                    </tr>
+                    <tr>
+                        <td>Capture rate</td>
+                        <td></th>
+                    </tr>
+                    <tr>
+                        <td>Growth rate</td>
+                        <td></th>
+                    </tr>
+                    <tr>
+                        <td>Happiness</td>
+                        <td></th>
+                    </tr>
+                    <tr>
+                        <td>Base exp</td>
+                        <td></th>
+                    </tr>
+                </table>
+            <table class="tablesNew" id = "breedingStats">
+                <tr>
+                    <th>Breading stats</th>
+                    <th>Value</th>
+                </tr>
+                <tr>
+                    <td>Egg group</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Egg cycles</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Gender</td>
+                    <td>
+                        <label style = "color:blue"></label>
+                        <label style = "color:rgb(255, 105, 193)"></label>
+                        <label></label>
+                    </td>
+                </tr>
+            </table>
+            </div>
+           
+            <table id = "ability_table">
+                <caption>Abilities</caption>
+                <tr>
+                    <th>Name</th>
+                    <th>Effect</th>
+                </tr>    
+            </table><br><br>
+        </div>
+        <script src="info.js"></script>
+    </body>
+</html>
