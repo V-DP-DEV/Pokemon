@@ -23,12 +23,26 @@ const genderlessLabel = breedingStats.rows[3].cells[1].children[2];
 
 const abilityTable = document.getElementById("ability_table");
 
+const defense = document.getElementById("defense")
+
 const evolves_from = document.getElementById("evolves_from")
 
 let maleIntervalId;
 let shinyIntervalId;
 
-let tempType = document.createElement("label");
+let defenseMap = new Map();
+
+const totalTypes = 18;
+
+//the data blocks must be inline, but individual elements must be block 
+let tempDefense = document.createElement("span");
+let tempDefenseType = document.createElement("div");
+let tempDefenseVal = document.createElement("div");
+
+tempDefense.appendChild(tempDefenseType);
+tempDefense.appendChild(tempDefenseVal);
+
+let tempType = document.createElement("span");
 tempType.classList.add('types')
 
 loadDataIntoElements(getQueryParm("id"))
@@ -71,6 +85,7 @@ async function loadDataIntoElements(nameOrId){
     obj2 = await res.json();
     console.log(obj);
     console.log(obj2);
+    addDefenseAgainstTypes();
 
     let name = obj.species.name[0].toUpperCase()+obj.species.name.substr(1,obj.species.name.length);
 
@@ -144,8 +159,8 @@ async function addEvulotionChain(){
     let evoChain = await res.json();
     console.log("Evolutions")
     //console.log(targetName);
-    addEvolvesFrom();
-    console.log(getTargetInEvoChain(evoChain.chain));
+    //addEvolvesFrom();
+    //console.log(getTargetInEvoChain(evoChain.chain));
 }
 
 function addEvolvesFrom(){
@@ -198,6 +213,62 @@ function addTypes(){
         type.innerHTML = "mythical";
         type.classList.add('mythical')
         types.appendChild(type);
+    }
+}
+
+async function addDefenseAgainstTypes(){
+    defenseMap.clear();
+    const res = await fetch("https://pokeapi.co/api/v2/type/");
+    let defenseTypesObj = await res.json();
+    for (let i = 0; i < defenseTypesObj.results.length-1; i++){
+        defenseMap.set(defenseTypesObj.results[i].name,1)
+    }
+    for (let i = 0; i <obj.types.length ; i++) {
+        const current = await fetch(obj.types[i].type.url);
+        const res2 = await current.json();
+        console.log(res2);
+        multiplyDefenses(res2.damage_relations.double_damage_from,2);
+        multiplyDefenses(res2.damage_relations.half_damage_from,0.5);
+        multiplyDefenses(res2.damage_relations.no_damage_from,0);
+        let newBlock = tempDefense.cloneNode(true);
+        newBlock.children[0].innerHTML = obj.types[i].type.name;
+        newBlock.children[1].innerHTML = defenseMap.get()
+    }
+
+    //const totalCols = Math.ceil(defenseMap.size /2)
+    let totalColInRow = 0;
+    const maxInARow = 10;
+    let row = defense.insertRow();
+    let row2 = defense.insertRow();
+
+    for(let i = 0; i < defenseMap.size; i++){
+        if (totalColInRow == maxInARow){
+            row = defense.insertRow();
+            row2 = defense.insertRow();
+            totalColInRow = 0
+        }
+
+        let name = defenseTypesObj.results[i].name
+        let cell = row.insertCell();
+        cell.innerHTML = name.substr(0,3).toUpperCase()
+        cell.classList.add("types");
+        cell.classList.add(name);
+        cell.style.textAlign = "center"
+
+        let cell2 = row2.insertCell();
+        cell2.innerHTML = defenseMap.get(name);
+        cell2.style.textAlign = "center"
+
+        totalColInRow++
+    }
+    console.log(defenseMap);
+
+}
+
+function multiplyDefenses(list, multiplier){
+    for (let i = 0; i < list.length; i++){
+        let name = list[i].name;
+        defenseMap.set(name,(defenseMap.get(name) *multiplier))
     }
 }
 

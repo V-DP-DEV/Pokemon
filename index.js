@@ -20,7 +20,7 @@ let tempId = document.createElement("div");
 let tempName = document.createElement("div");
 let tempStr = document.createElement("div");
 let tempTypes = document.createElement("div");
-let tempType = document.createElement("label");
+let tempType = document.createElement("span");
 tempType.classList.add('types')
 tempBlock.appendChild(tempImg);
 tempBlock.appendChild(tempId);
@@ -73,7 +73,6 @@ async function loadGenerationsData(){
         total += generationData.pokemon_species.length;
         generations[i] = total;
     }
-    console.log(generations)
 }
 
 async function setDiscoveryGeneration(a){
@@ -92,10 +91,8 @@ async function loadBatchPokemon(){
         load_more.style.display = "none";
     }
     for(let i = begin; i <= end; i++){
-        console.log(i);
         let copy = tempBlock.cloneNode(true);
         copy.children[0].addEventListener("click",function(){
-            alert("A new pokemon has been selected")
             window.open('info.html?id='+i);
         })
         discovery.appendChild(copy)
