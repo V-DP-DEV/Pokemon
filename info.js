@@ -27,6 +27,8 @@ const defense = document.getElementById("defense")
 
 const evolves_from = document.getElementById("evolves_from")
 
+const evoTree = document.getElementById("evoTree")
+
 let maleIntervalId;
 let shinyIntervalId;
 
@@ -42,8 +44,19 @@ let tempDefenseVal = document.createElement("div");
 tempDefense.appendChild(tempDefenseType);
 tempDefense.appendChild(tempDefenseVal);
 
+let tempBlock = document.createElement("div");
+tempBlock.classList.add("discoverBlock");
+let tempImg = document.createElement("img");
+let tempName = document.createElement("div");
+let tempStr = document.createElement("div");
+let tempTypes = document.createElement("div");
 let tempType = document.createElement("span");
 tempType.classList.add('types')
+tempBlock.appendChild(tempImg);
+tempBlock.appendChild(tempName);
+tempBlock.appendChild(tempStr);
+tempBlock.appendChild(tempTypes);
+
 
 loadDataIntoElements(getQueryParm("id"))
 
@@ -86,6 +99,7 @@ async function loadDataIntoElements(nameOrId){
     console.log(obj);
     console.log(obj2);
     addDefenseAgainstTypes();
+    createEvoTree();
 
     let name = obj.species.name[0].toUpperCase()+obj.species.name.substr(1,obj.species.name.length);
 
@@ -139,7 +153,6 @@ function clearData(){
     if(maleIntervalId != null){clearInterval(maleIntervalId)}
     if(shinyIntervalId != null){clearInterval(shinyIntervalId)}
     types.innerHTML = "";
-    evolves_from.innerHTML = "";
 }
 
 async function addAbilities(){
@@ -158,6 +171,7 @@ async function addEvulotionChain(){
     const res = await fetch(obj2.evolution_chain.url);
     let evoChain = await res.json();
     console.log("Evolutions")
+    console.log(evoChain)
     //console.log(targetName);
     //addEvolvesFrom();
     //console.log(getTargetInEvoChain(evoChain.chain));
@@ -290,4 +304,53 @@ function rotateBetweenImages(normalImg, shinyImg, imgElement){
         }
     },4000);
     return id;
+}
+
+async function createEvoTree(){
+    const res = await fetch(obj2.evolution_chain.url);
+    let evoChain = await res.json();
+    console.log("Evolutions");
+    addBranch(evoTree,evoChain.chain)
+}
+
+async function addBranch(parent, basePokemon) {
+    //parent.innerHTML = basePokemon.species.name;
+    let block = tempBlock.cloneNode(true);
+    loadPokemonIntoBlock(basePokemon.species.name,block)
+    parent.appendChild(block)
+
+    let branches = basePokemon.evolves_to.length
+
+    if(branches != 0){
+        const wrapper = document.createElement("div");
+        wrapper.classList.add("wrapper")
+        let space = 100 / branches;
+        for(let i = 0; i < branches;i++){
+            let subBranch = document.createElement("div");
+            subBranch.classList.add("evolutionRow");
+            subBranch.style.width = space + "%";
+            let arrow = document.createElement("div");
+            arrow.classList.add("arrow");
+            addBranch(subBranch,basePokemon.evolves_to[i]);
+
+            subBranch.insertAdjacentElement("afterbegin",arrow)
+
+            wrapper.appendChild(subBranch);
+        }
+        parent.appendChild(wrapper);
+    }
+}
+
+async function loadPokemonIntoBlock(id,block){
+    const res2 = await fetch("https://pokeapi.co/api/v2/pokemon/"+(id));
+    currentPokemon = await res2.json();
+    block.children[0].src = currentPokemon.sprites.front_default;
+    block.children[1].innerHTML = currentPokemon.name;
+    block.children[2].innerHTML = "Str:  " + (currentPokemon.stats[0].base_stat+currentPokemon.stats[1].base_stat+currentPokemon.stats[2].base_stat+currentPokemon.stats[3].base_stat+currentPokemon.stats[4].base_stat+currentPokemon.stats[5].base_stat)
+    for (let i = 0; i <  currentPokemon.types.length ; i++) {
+        let currentType= tempType.cloneNode(true);
+        currentType.innerHTML = currentPokemon.types[i].type.name;
+        currentType.classList.add(currentPokemon.types[i].type.name)
+        block.children[3].appendChild(currentType);
+    }
 }
