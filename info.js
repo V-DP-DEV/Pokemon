@@ -25,8 +25,6 @@ const abilityTable = document.getElementById("ability_table");
 
 const defense = document.getElementById("defense")
 
-const evolves_from = document.getElementById("evolves_from")
-
 const evoTree = document.getElementById("evoTree")
 
 let maleIntervalId;
@@ -36,9 +34,10 @@ let defenseMap = new Map();
 
 const totalTypes = 18;
 
-let maxWidth = 100; //in percentage
+const heightOfBranch = 40;
 
-//the data blocks must be inline, but individual elements must be block 
+const maxWidth = 100; //in percentage
+
 let tempDefense = document.createElement("span");
 let tempDefenseType = document.createElement("div");
 let tempDefenseVal = document.createElement("div");
@@ -58,7 +57,6 @@ tempBlock.appendChild(tempImg);
 tempBlock.appendChild(tempName);
 tempBlock.appendChild(tempStr);
 tempBlock.appendChild(tempTypes);
-
 
 loadDataIntoElements(getQueryParm("id"))
 
@@ -131,7 +129,7 @@ async function loadDataIntoElements(nameOrId){
     breedingStats.rows[2].cells[1].innerHTML = obj2.hatch_counter;
     setGender();
     addAbilities();
-    addEvulotionChain();
+
 }
 
 function setGender(){
@@ -167,43 +165,6 @@ async function addAbilities(){
         cel1.innerHTML = ability.name;
         cel2.innerHTML = ability.effect_entries[getEnglishStr(ability.effect_entries)].short_effect;
     }
-}
-
-async function addEvulotionChain(){
-    const res = await fetch(obj2.evolution_chain.url);
-    let evoChain = await res.json();
-    console.log("Evolutions")
-    console.log(evoChain)
-    //console.log(targetName);
-    //addEvolvesFrom();
-    //console.log(getTargetInEvoChain(evoChain.chain));
-}
-
-function addEvolvesFrom(){
-    if (obj2.evolves_from_species != null){
-        console.log(obj2.evolves_from_species.name) 
-        let block = tempBlock.cloneNode(true);
-        loadPokemonIntoBlock(obj2.evolves_from_species.name,block);
-        evolves_from.appendChild(block);
-    }
-}
-
-function addEvolvesTo(){
-
-}
-
-function getTargetInEvoChain(beginPokemon){
-    let targetName = obj.name;
-    if (targetName == beginPokemon.species.name){
-        return beginPokemon;
-    }
-    for (let i = 0; i < beginPokemon.evolves_to.length;i++){
-        recursiveResult = getTargetInEvoChain(beginPokemon.evolves_to[i]);
-        if (recursiveResult != null){
-            return recursiveResult;
-        }
-    }
-    return null;
 }
 
 function deleteAbilities(){
@@ -313,8 +274,11 @@ async function createEvoTree(){
     let evoChain = await res.json();
     console.log("Evolutions");
     const smallestWidth = 200;
+    if (evoChain.chain.evolves_to.length == 0){
+        evoTree.parentNode.innerHTML = "This pokemon has no evolutions";
+        return;
+    }
     addBranch(evoTree,evoChain.chain,100);
-    console.log(maxWidth);
     let totalWidth = 100*smallestWidth / maxWidth;
 
     if (totalWidth > evoTree.parentElement.clientWidth){
@@ -336,6 +300,20 @@ async function addBranch(parent, basePokemon,widthPerc) {
         const wrapper = document.createElement("div");
         wrapper.classList.add("wrapper")
         let space = 100 / branches;
+
+        if (branches !=1 ){
+            let arrow2 = document.createElement("div");
+            arrow2.classList.add("arrow");
+            parent.appendChild(arrow2);
+
+            let line = document.createElement("div")
+            line.classList.add("branchLine")
+            line.style.marginLeft = (space/2)+"%"
+            line.style.marginRight = (space/2)+"%";
+
+            parent.appendChild(line);
+        }
+
         let newPerc = space/100 *widthPerc; 
         if (newPerc < maxWidth){
             maxWidth = newPerc;
@@ -347,6 +325,7 @@ async function addBranch(parent, basePokemon,widthPerc) {
             subBranch.style.width = space + "%";
             let arrow = document.createElement("div");
             arrow.classList.add("arrow");
+
             addBranch(subBranch,basePokemon.evolves_to[i],newPerc);
 
             subBranch.insertAdjacentElement("afterbegin",arrow)
