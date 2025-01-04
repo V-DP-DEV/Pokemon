@@ -36,6 +36,8 @@ let defenseMap = new Map();
 
 const totalTypes = 18;
 
+let maxWidth = 100; //in percentage
+
 //the data blocks must be inline, but individual elements must be block 
 let tempDefense = document.createElement("span");
 let tempDefenseType = document.createElement("div");
@@ -310,11 +312,13 @@ async function createEvoTree(){
     const res = await fetch(obj2.evolution_chain.url);
     let evoChain = await res.json();
     console.log("Evolutions");
-    addBranch(evoTree,evoChain.chain)
+    const smallestWidth = 250;
+    addBranch(evoTree,evoChain.chain,100);
+    console.log(maxWidth);
+    evoTree.style.width = 100*smallestWidth / maxWidth;
 }
 
-async function addBranch(parent, basePokemon) {
-    //parent.innerHTML = basePokemon.species.name;
+async function addBranch(parent, basePokemon,widthPerc) {
     let block = tempBlock.cloneNode(true);
     loadPokemonIntoBlock(basePokemon.species.name,block)
     parent.appendChild(block)
@@ -325,13 +329,18 @@ async function addBranch(parent, basePokemon) {
         const wrapper = document.createElement("div");
         wrapper.classList.add("wrapper")
         let space = 100 / branches;
+        let newPerc = space/100 *widthPerc; 
+        if (newPerc < maxWidth){
+            maxWidth = newPerc;
+        }
+
         for(let i = 0; i < branches;i++){
             let subBranch = document.createElement("div");
             subBranch.classList.add("evolutionRow");
             subBranch.style.width = space + "%";
             let arrow = document.createElement("div");
             arrow.classList.add("arrow");
-            addBranch(subBranch,basePokemon.evolves_to[i]);
+            addBranch(subBranch,basePokemon.evolves_to[i],newPerc);
 
             subBranch.insertAdjacentElement("afterbegin",arrow)
 
