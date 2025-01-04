@@ -36,7 +36,7 @@ const totalTypes = 18;
 
 const heightOfBranch = 40;
 
-const maxWidth = 100; //in percentage
+let maxWidth = 100; //in percentage
 
 let tempDefense = document.createElement("span");
 let tempDefenseType = document.createElement("div");
