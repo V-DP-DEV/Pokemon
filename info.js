@@ -312,10 +312,17 @@ async function createEvoTree(){
     const res = await fetch(obj2.evolution_chain.url);
     let evoChain = await res.json();
     console.log("Evolutions");
-    const smallestWidth = 250;
+    const smallestWidth = 200;
     addBranch(evoTree,evoChain.chain,100);
     console.log(maxWidth);
-    evoTree.style.width = 100*smallestWidth / maxWidth;
+    let totalWidth = 100*smallestWidth / maxWidth;
+
+    if (totalWidth > evoTree.parentElement.clientWidth){
+        evoTree.style.width = totalWidth+"px";
+    }
+    else{
+        evoTree.style.width = "100%";
+    }
 }
 
 async function addBranch(parent, basePokemon,widthPerc) {
