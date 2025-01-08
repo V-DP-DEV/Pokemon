@@ -22,7 +22,7 @@ load_more.addEventListener("click",function(){
 
 searchButton.addEventListener("click", async function(){
     text = searchInput.value;
-    window.open('info.html?id='+text.toLowerCase());
+    window.location.href = 'info.html?id='+text.toLowerCase();
 });
 
 main();
@@ -97,7 +97,7 @@ async function loadBatchPokemon(){
     for(let i = begin; i <= end; i++){
         let copy = tempBlock.cloneNode(true);
         copy.children[0].addEventListener("click",function(){
-            window.open('info.html?id='+i);
+            window.location.href = ('info.html?id='+i);
         })
         discovery.appendChild(copy)
     }
