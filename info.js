@@ -102,6 +102,7 @@ async function loadDataIntoElements(nameOrId){
     console.log(obj2);
     addDefenseAgainstTypes(obj.types);
     createEvoTree(obj2.evolution_chain.url);
+    addEggGroup(obj2.egg_groups);
 
     let name = obj.species.name[0].toUpperCase()+obj.species.name.substr(1,obj.species.name.length);
 
@@ -338,4 +339,18 @@ function clearData(){
     for (let [key,value] of defenseMap) {
         defenseMap.set(key,1);
     }
+}
+
+function addEggGroup(eggGroups){
+    if (eggGroups.length == 0){
+        breedingStats.rows[1].cells[1].innerHTML = "No egg group";
+        return;
+    }
+    let str = "";
+    for (let i = 0; i < eggGroups.length-1 ; i++){
+        str+= eggGroups[i].name+', ';
+    }
+    
+    str+= eggGroups[eggGroups.length-1].name;
+    breedingStats.rows[1].cells[1].innerHTML = str;
 }
