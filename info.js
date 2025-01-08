@@ -56,7 +56,8 @@ function getQueryParm(parm){
 
 searchButton.addEventListener("click", async function(){
     text = searchInput.value;
-    loadDataIntoElements(text.toLowerCase());
+    //loadDataIntoElements(text.toLowerCase());
+    window.location.href = 'info.html?id='+text.toLowerCase();
 });
 
 searchInput.addEventListener("keypress", function(e){
@@ -94,7 +95,7 @@ function extract(description){
 //DISPLAY DATA OF
 
 async function loadDataIntoElements(nameOrId){
-    clearData();
+    //clearData();
     const obj = await getPokemonData(nameOrId);
     const obj2 = await getData("https://pokeapi.co/api/v2/pokemon-species/"+ obj.id+"/");
     console.log(obj);
