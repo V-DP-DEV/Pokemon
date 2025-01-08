@@ -59,6 +59,13 @@ searchButton.addEventListener("click", async function(){
     loadDataIntoElements(text.toLowerCase());
 });
 
+searchInput.addEventListener("keypress", function(e){
+    text = searchInput.value;
+    if (e.key == "Enter"){
+        window.location.href = 'info.html?id='+text.toLowerCase();
+    }
+})
+
 //GET DATA OF POKEMON
 async function getPokemonData(name){
     const res = await fetch("https://pokeapi.co/api/v2/pokemon/"+name);

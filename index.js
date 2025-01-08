@@ -20,10 +20,19 @@ load_more.addEventListener("click",function(){
     loadBatchPokemon();
 })
 
+searchInput.addEventListener("keypress", function(e){
+    text = searchInput.value;
+    if (e.key == "Enter"){
+        window.location.href = 'info.html?id='+text.toLowerCase();
+    }
+})
+
 searchButton.addEventListener("click", async function(){
     text = searchInput.value;
     window.location.href = 'info.html?id='+text.toLowerCase();
 });
+
+
 
 main();
 
