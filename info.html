@@ -14,8 +14,8 @@
     <body>
         <div class = "topBar">
             <label style = "color:rgb(228, 228, 228)">Pokemon name</label><br>
-            <input type = "text" id = "searchInput" style="background-color: grey; color: rgb(218, 218, 218)">
-            <button id = "searchButton" style="background-color: grey;color: rgb(218, 218, 218)" >Search pokemon</button><br><br>
+            <input type = "text" id = "searchInput" class = "darkTheme">
+            <button id = "searchButton" class = "darkTheme" >Search pokemon</button><br><br>
         </div>
         <div class = "center">
             <div style="margin-bottom: 40px;">
@@ -28,11 +28,11 @@
             <span id = "generation">Added in</span><br>
             <span id = "types">Types: </span><br>
             </div>
-            <h2 style = "text-align: center;">Evolution chain</h2>
-            <div style = "width: 100%;text-align: center;margin-bottom: 20px;overflow: auto;">
-                <div id = "evoTree"  style = "width: 1000px;text-align: center;margin-bottom: 20px;"></div>
+            <h2>Evolution chain</h2>
+            <div class = "scrollBox">
+                <div id = "evoTree"  class = "evoTree"></div>
             </div>
-                <div class = "container">
+            <div class = "container">
                 <table class = "tablesNew" id = "battleStats">
                     <tr>
                         <th>Battle stats</th>
@@ -89,28 +89,28 @@
                         <td></th>
                     </tr>
                 </table>
-            <table class="tablesNew" id = "breedingStats">
-                <tr>
-                    <th>Breading stats</th>
-                    <th>Value</th>
-                </tr>
-                <tr>
-                    <td>Egg group</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>Egg cycles</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>Gender</td>
-                    <td>
-                        <span style = "color:blue"></span>
-                        <span style = "color:rgb(255, 105, 193)"></span>
-                        <span></span>
-                    </td>
-                </tr>
-            </table>
+                <table class="tablesNew" id = "breedingStats">
+                    <tr>
+                        <th>Breading stats</th>
+                        <th>Value</th>
+                    </tr>
+                    <tr>
+                        <td>Egg group</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Egg cycles</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Gender</td>
+                        <td>
+                            <span style = "color:blue"></span>
+                            <span style = "color:rgb(255, 105, 193)"></span>
+                            <span></span>
+                        </td>
+                    </tr>
+                </table>
             </div>
             <table id = "defense" class = "defenseTable">
                 <caption> Defense effectiveness</caption>

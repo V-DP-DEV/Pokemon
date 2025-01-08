@@ -12,22 +12,9 @@ let totalPokemonInGeneration;
 let firstIdInGeneration;
 let generations = [];
 
-//FOR DISCOVER BY GENERATION
-let tempBlock = document.createElement("div");
-tempBlock.classList.add("discoverBlock");
-let tempImg = document.createElement("img");
-let tempId = document.createElement("div");
-let tempName = document.createElement("div");
-let tempStr = document.createElement("div");
-let tempTypes = document.createElement("div");
+let tempBlock = createDisplayBlock();
 let tempType = document.createElement("span");
 tempType.classList.add('types')
-tempBlock.appendChild(tempImg);
-tempBlock.appendChild(tempId);
-tempBlock.appendChild(tempName);
-tempBlock.appendChild(tempStr);
-tempBlock.appendChild(tempTypes);
-
 
 load_more.addEventListener("click",function(){
     loadBatchPokemon();
@@ -45,6 +32,23 @@ async function main(){
     await setDiscoveryGeneration(1);
     await loadBatchPokemon();
     createGenerationButtons();
+}
+
+//CREATE DISPLAY BLOCK
+function createDisplayBlock(){
+    let block = document.createElement("div");
+    block.classList.add("discoverBlock");
+    let img = document.createElement("img");
+    let id = document.createElement("div");
+    let name = document.createElement("div");
+    let str = document.createElement("div");
+    let types = document.createElement("div");
+    block.appendChild(img);
+    block.appendChild(id);
+    block.appendChild(name);
+    block.appendChild(str);
+    block.appendChild(types);
+    return block;
 }
 
 //GENERATION AND BATCH RETRIEVAL
@@ -98,13 +102,9 @@ async function loadBatchPokemon(){
         discovery.appendChild(copy)
     }
     for(let i = begin; i <= end; i++){
-        pokemonToDiscovery(i,firstIdInGeneration)
+        loadPokemonIntoBlock(i,discovery.children[i-firstIdInGeneration]);
     }
     totalPokemonLoaded += increment;
-}
-
-async function pokemonToDiscovery(id,generationFirstId){
-    loadPokemonIntoBlock(id,discovery.children[id-generationFirstId]);
 }
 
 async function loadPokemonIntoBlock(id, block){

@@ -1,9 +1,22 @@
 body{
     background-image : url('z.jpg');
 }
-h1 {
+h1,h2 {
     text-align: center;
 }
+
+@media (max-width:768px){
+    .tablesNew{
+        flex: 1 1 100%;
+        margin: 10px 0;
+    }
+    .defenseTable{
+        width: 30%;
+        margin-left: 0px;
+        font-size: 12px;
+    }
+}
+
 .topBar{
     background-color: rgb(78, 78, 78);
     border-radius: 4px;
@@ -12,15 +25,19 @@ h1 {
     padding-left: 8px;
     padding-top: 3px;
 }
-table, th, td {
-  border: 1px solid #c9c9c9;
-  border-collapse: collapse;
-  padding-left: 10px;
-  padding-right: 10px;
+
+.darkTheme{
+    background-color: grey;
+    color:rgb(218, 218, 218);
 }
-tr:nth-child(even) {
-    background: #f2f2f2;
+
+.sprites{
+    width: 150px;
+    height: 150px;
+    float:left;
+    margin-right: 5px;
 }
+
 .center {
     background-color: white;
     width: 80%;
@@ -29,18 +46,12 @@ tr:nth-child(even) {
     border-radius: 8px;
     padding: 40px;
 }
+
+/*WRAPPERS*/
+
 .wrapper{
     display: flex;
     flex-direction: row;
-}
-
-.generationPicker{
-    text-align: center;
-}
-
-.discoverBlock{
-    margin: 5px;
-    text-align: center;
 }
 
 .container{
@@ -50,20 +61,38 @@ tr:nth-child(even) {
     width: 100%;
 }
 
+.tablesNew{
+    flex: 1 1 30%;
+    margin: 10px;
+}
+
+/*GENERATION PICKER AND DISCOVERY ELEMENTS*/
+
+.generationPicker{
+    text-align: center;
+}
+
 .generationButton{
     width: 40px;
     margin: 7px
 }
 
-.tablesHorizontally{
-    float:right;
-    margin-right: 20px;
-    margin-bottom: 15px;
+.discoverBlock{
+    margin: 5px;
+    text-align: center;
 }
 
-.tablesNew{
-    flex: 1 1 30%;
-    margin: 10px;
+/*TABLES*/
+
+table, th, td {
+    border: 1px solid #c9c9c9;
+    border-collapse: collapse;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+tr:nth-child(even) {
+    background: #f2f2f2;
 }
 
 .defenseTable{
@@ -72,14 +101,23 @@ tr:nth-child(even) {
     font-size: 14px;
 }
 
+/*Evolution*/
+.scrollBox{
+    width: 100%;
+    text-align: center;
+    margin-bottom: 20px;
+    overflow: auto;
+}
+
 .evolutionBlock{
     background-color: red;
     position: absolute;
     width: 50px;
 }
 
-.evolutionRow{
-    margin-top: 0px;
+.evoTree{
+    text-align: center;
+    margin-bottom: 20px;
 }
 
 .branchLine{
@@ -98,24 +136,8 @@ tr:nth-child(even) {
     position: relative;
 }
 
-@media (max-width:768px){
-    .tablesNew{
-        flex: 1 1 100%;
-        margin: 10px 0;
-    }
-    .defenseTable{
-        width: 30%;
-        margin-left: 0px;
-        font-size: 12px;
-    }
-}
+/*Types*/
 
-.sprites{
-    width: 150px;
-    height: 150px;
-    float:left;
-    margin-right: 5px;
-}
 .types{
     color: white;
     padding-left: 5px;

@@ -1,6 +1,4 @@
-let obj; //add search pokemon to top//change the input box to a select element maybe?//do more error handling
-let obj2; 
-
+//add search pokemon to top//change the input box to a select element maybe?//do more error handling
 const searchButton = document.getElementById("searchButton");
 const searchInput = document.getElementById("searchInput");
 
@@ -31,19 +29,10 @@ let maleIntervalId;
 let shinyIntervalId;
 
 let defenseMap = new Map();
-
 const totalTypes = 18;
 
 const heightOfBranch = 40;
-
-let maxWidth = 100; //in percentage
-
-let tempDefense = document.createElement("span");
-let tempDefenseType = document.createElement("div");
-let tempDefenseVal = document.createElement("div");
-
-tempDefense.appendChild(tempDefenseType);
-tempDefense.appendChild(tempDefenseVal);
+let smallestWidthPercentage = 100; //in percentage
 
 let tempBlock = document.createElement("div");
 tempBlock.classList.add("discoverBlock");
@@ -77,6 +66,12 @@ async function getPokemonData(name){
     return obj
 }
 
+async function getData(url){
+    const res = await fetch(url);
+    const obj = await res.json();
+    return obj
+}
+
 function getEnglishStr(object){
     for(let i = 0; i < object.length ; i++){
         if (object[i].language.name == "en"){return i;}
@@ -93,13 +88,12 @@ function extract(description){
 
 async function loadDataIntoElements(nameOrId){
     clearData();
-    obj = await getPokemonData(nameOrId);
-    const res = await fetch("https://pokeapi.co/api/v2/pokemon-species/"+ obj.id+"/");
-    obj2 = await res.json();
+    const obj = await getPokemonData(nameOrId);
+    const obj2 = await getData("https://pokeapi.co/api/v2/pokemon-species/"+ obj.id+"/");
     console.log(obj);
     console.log(obj2);
-    addDefenseAgainstTypes();
-    createEvoTree();
+    addDefenseAgainstTypes(obj.types);
+    createEvoTree(obj2.evolution_chain.url);
 
     let name = obj.species.name[0].toUpperCase()+obj.species.name.substr(1,obj.species.name.length);
 
@@ -108,7 +102,7 @@ async function loadDataIntoElements(nameOrId){
     weight.innerHTML = "Weight: "+ (obj.weight/10) + " kg";
     height.innerHTML = "Height: " + (obj.height/10) + " m";
     generation.innerHTML = "Added in " + obj2.generation.name
-    addTypes()
+    addTypes(obj.types,obj2.is_mythical,obj2.is_legendary)
     maleIntervalId = rotateBetweenImages(obj.sprites.front_default,obj.sprites.front_shiny,frontImg)
     shinyIntervalId =rotateBetweenImages(obj.sprites.back_default,obj.sprites.back_shiny,backImg)
 
@@ -127,65 +121,50 @@ async function loadDataIntoElements(nameOrId){
     trainingStats.rows[4].cells[1].innerHTML = obj.base_experience
     
     breedingStats.rows[2].cells[1].innerHTML = obj2.hatch_counter;
-    setGender();
-    addAbilities();
-
+    setGender(obj2.gender_rate);
+    addAbilities(obj.abilities);
 }
 
-function setGender(){
-    let rate = obj2.gender_rate;
-
+function setGender(gender){
     maleLabel.innerHTML = "";
     femaleLabel.innerHTML = "";
     genderlessLabel.innerHTML = "";
 
-    if (rate == -1){
+    if (gender == -1){
         genderlessLabel.innerHTML = "Genderless";
     }
     else{
-        maleLabel.innerHTML = ((8 - rate)*12.5) + "% male";
-        femaleLabel.innerHTML = (rate*12.5)+ "% female  "
+        maleLabel.innerHTML = ((8 - gender)*12.5) + "% male";
+        femaleLabel.innerHTML = (gender*12.5)+ "% female  "
     }
 }
 
-function clearData(){
-    deleteAbilities();
-    if(maleIntervalId != null){clearInterval(maleIntervalId)}
-    if(shinyIntervalId != null){clearInterval(shinyIntervalId)}
-    types.innerHTML = "";
-}
-
-async function addAbilities(){
-    for(let i = 0; i < obj.abilities.length; i++){
+async function addAbilities(abilities){
+    for(let i = 0; i < abilities.length; i++){
         let row = abilityTable.insertRow(-1);
         let cel1 = row.insertCell(-1);
         let cel2 = row.insertCell(-1);
-        const res = await fetch(obj.abilities[i].ability.url);
+        const res = await fetch(abilities[i].ability.url);
         ability = await res.json();
         cel1.innerHTML = ability.name;
         cel2.innerHTML = ability.effect_entries[getEnglishStr(ability.effect_entries)].short_effect;
     }
 }
 
-function deleteAbilities(){
-    let length = abilityTable.rows.length;
-    for(let i = 1; i < length; i++ ){abilityTable.deleteRow(1)}
-}
-
-function addTypes(){
-    for (let i = 0; i < obj.types.length; i++) {
+function addTypes(typesList,is_mythical,is_legendary){
+    for (let i = 0; i < typesList.length; i++) {
         let type = tempType.cloneNode(true);
-        type.innerHTML = obj.types[i].type.name;
-        type.classList.add(obj.types[i].type.name)
+        type.innerHTML = typesList[i].type.name;
+        type.classList.add(typesList[i].type.name)
         types.appendChild(type);
     }
-    if(obj2.is_legendary){
+    if(is_legendary){
         let type = tempType.cloneNode(true);
         type.innerHTML = "legendary";
         type.classList.add('legendary')
         types.appendChild(type);
     }
-    if(obj2.is_mythical){
+    if(is_mythical){
         let type = tempType.cloneNode(true);
         type.innerHTML = "mythical";
         type.classList.add('mythical')
@@ -193,26 +172,19 @@ function addTypes(){
     }
 }
 
-async function addDefenseAgainstTypes(){
+async function addDefenseAgainstTypes(typesList){
     defenseMap.clear();
-    const res = await fetch("https://pokeapi.co/api/v2/type/");
-    let defenseTypesObj = await res.json();
+    const defenseTypesObj = await getData("https://pokeapi.co/api/v2/type/");
     for (let i = 0; i < defenseTypesObj.results.length-1; i++){
         defenseMap.set(defenseTypesObj.results[i].name,1)
     }
-    for (let i = 0; i <obj.types.length ; i++) {
-        const current = await fetch(obj.types[i].type.url);
-        const res2 = await current.json();
-        console.log(res2);
-        multiplyDefenses(res2.damage_relations.double_damage_from,2);
-        multiplyDefenses(res2.damage_relations.half_damage_from,0.5);
-        multiplyDefenses(res2.damage_relations.no_damage_from,0);
-        let newBlock = tempDefense.cloneNode(true);
-        newBlock.children[0].innerHTML = obj.types[i].type.name;
-        newBlock.children[1].innerHTML = defenseMap.get()
+    for (let i = 0; i <typesList.length ; i++) {
+        const typeData = await getData(typesList[i].type.url);
+        multiplyDefenses(typeData.damage_relations.double_damage_from,2);
+        multiplyDefenses(typeData.damage_relations.half_damage_from,0.5);
+        multiplyDefenses(typeData.damage_relations.no_damage_from,0);
     }
 
-    //const totalCols = Math.ceil(defenseMap.size /2)
     let totalColInRow = 0;
     const maxInARow = 10;
     let row = defense.insertRow();
@@ -239,7 +211,6 @@ async function addDefenseAgainstTypes(){
         totalColInRow++
     }
     console.log(defenseMap);
-
 }
 
 function multiplyDefenses(list, multiplier){
@@ -269,17 +240,15 @@ function rotateBetweenImages(normalImg, shinyImg, imgElement){
     return id;
 }
 
-async function createEvoTree(){
-    const res = await fetch(obj2.evolution_chain.url);
-    let evoChain = await res.json();
-    console.log("Evolutions");
+async function createEvoTree(chainUrl){
+    const evoChain = await getData(chainUrl);
     const smallestWidth = 200;
     if (evoChain.chain.evolves_to.length == 0){
         evoTree.parentNode.innerHTML = "This pokemon has no evolutions";
         return;
     }
     addBranch(evoTree,evoChain.chain,100);
-    let totalWidth = 100*smallestWidth / maxWidth;
+    let totalWidth = 100*smallestWidth / smallestWidthPercentage;
 
     if (totalWidth > evoTree.parentElement.clientWidth){
         evoTree.style.width = totalWidth+"px";
@@ -289,56 +258,56 @@ async function createEvoTree(){
     }
 }
 
-async function addBranch(parent, basePokemon,widthPerc) {
+async function addBranch(parent, basePokemon,widthPercentage) {
     let block = tempBlock.cloneNode(true);
     loadPokemonIntoBlock(basePokemon.species.name,block)
     parent.appendChild(block)
 
-    let branches = basePokemon.evolves_to.length
-
-    if(branches != 0){
-        const wrapper = document.createElement("div");
-        wrapper.classList.add("wrapper")
-        let space = 100 / branches;
-
-        if (branches !=1 ){
-            let arrow2 = document.createElement("div");
-            arrow2.classList.add("arrow");
-            parent.appendChild(arrow2);
-
-            let line = document.createElement("div")
-            line.classList.add("branchLine")
-            line.style.marginLeft = (space/2)+"%"
-            line.style.marginRight = (space/2)+"%";
-
-            parent.appendChild(line);
-        }
-
-        let newPerc = space/100 *widthPerc; 
-        if (newPerc < maxWidth){
-            maxWidth = newPerc;
-        }
-
-        for(let i = 0; i < branches;i++){
-            let subBranch = document.createElement("div");
-            subBranch.classList.add("evolutionRow");
-            subBranch.style.width = space + "%";
-            let arrow = document.createElement("div");
-            arrow.classList.add("arrow");
-
-            addBranch(subBranch,basePokemon.evolves_to[i],newPerc);
-
-            subBranch.insertAdjacentElement("afterbegin",arrow)
-
-            wrapper.appendChild(subBranch);
-        }
-        parent.appendChild(wrapper);
+    const branches = basePokemon.evolves_to.length
+    if (branches == 0){
+        return;
     }
+
+    const wrapper = document.createElement("div");
+    wrapper.classList.add("wrapper")
+    const space = 100 / branches;
+
+    if (branches !=1 ){
+        let selfArrow = document.createElement("div");
+        selfArrow.classList.add("arrow");
+        parent.appendChild(selfArrow);
+
+        let line = document.createElement("div")
+        line.classList.add("branchLine")
+        line.style.marginLeft = (space/2)+"%"
+        line.style.marginRight = (space/2)+"%";
+
+        parent.appendChild(line);
+    }
+
+    const newPercentage = space/100 *widthPercentage; 
+    if (newPercentage < smallestWidthPercentage){
+        smallestWidthPercentage = newPercentage;
+    }
+
+    for(let i = 0; i < branches;i++){
+        let subBranch = document.createElement("div");
+        subBranch.classList.add("evolutionRow");
+        subBranch.style.width = space + "%";
+        let arrow = document.createElement("div");
+        arrow.classList.add("arrow");
+
+        addBranch(subBranch,basePokemon.evolves_to[i],newPercentage);
+
+        subBranch.insertAdjacentElement("afterbegin",arrow)
+
+        wrapper.appendChild(subBranch);
+    }
+    parent.appendChild(wrapper);
 }
 
 async function loadPokemonIntoBlock(id,block){
-    const res2 = await fetch("https://pokeapi.co/api/v2/pokemon/"+(id));
-    currentPokemon = await res2.json();
+    currentPokemon = await getPokemonData(id);
     block.children[0].src = currentPokemon.sprites.front_default;
     block.children[1].innerHTML = currentPokemon.name;
     block.children[2].innerHTML = "Str:  " + (currentPokemon.stats[0].base_stat+currentPokemon.stats[1].base_stat+currentPokemon.stats[2].base_stat+currentPokemon.stats[3].base_stat+currentPokemon.stats[4].base_stat+currentPokemon.stats[5].base_stat)
@@ -347,5 +316,18 @@ async function loadPokemonIntoBlock(id,block){
         currentType.innerHTML = currentPokemon.types[i].type.name;
         currentType.classList.add(currentPokemon.types[i].type.name)
         block.children[3].appendChild(currentType);
+    }
+}
+
+function clearData(){
+    let length = abilityTable.rows.length;
+    for(let i = 1; i < length; i++ ){abilityTable.deleteRow(1)}
+    if(maleIntervalId != null){clearInterval(maleIntervalId)}
+    if(shinyIntervalId != null){clearInterval(shinyIntervalId)}
+    types.innerHTML = "";
+    evoTree.innerHTML = ""
+    defense.innerHTML = "";
+    for (let [key,value] of defenseMap) {
+        defenseMap.set(key,1);
     }
 }
