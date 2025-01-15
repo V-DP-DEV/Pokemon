@@ -28,7 +28,6 @@ const defenseTable = document.getElementById("defense")
 const evoTreeDiv = document.getElementById("evoTree")
 
 //for defenseMap
-//let defenseMap = new Map();
 
 let defenseMap = new Map([["normal",1],["fighting",1],["flying",1],["poison",1],["ground",1],["rock",1],["bug",1],["ghost",1],["steel",1],["fire",1],["water",1],["grass",1],["electric",1],["psychic",1],["ice",1],["dragon",1],["dark",1],["fairy",1],["stellar",1]]);
 const totalTypes = 18;
@@ -102,8 +101,9 @@ async function loadDataIntoElements(nameOrId){
     const obj2 = await getData("https://pokeapi.co/api/v2/pokemon-species/"+ obj.id+"/");
     console.log(obj);
     console.log(obj2);
-    addDefenseAgainstTypes(obj.types);
+    addAbilities(obj.abilities);
     createEvoTree(obj2.evolution_chain.url);
+    addDefenseAgainstTypes(obj.types);
     addEggGroup(obj2.egg_groups);
 
     let name = obj.species.name[0].toUpperCase()+obj.species.name.substr(1,obj.species.name.length);
@@ -133,7 +133,6 @@ async function loadDataIntoElements(nameOrId){
     
     breedingStats.rows[2].cells[1].innerHTML = obj2.hatch_counter;
     setGender(obj2.gender_rate);
-    addAbilities(obj.abilities);
 }
 
 function setGender(gender){
@@ -262,7 +261,7 @@ async function createEvoTree(chainUrl){
 async function addBranch(parent, basePokemon,widthPercentage) {
     let block = tempBlock.cloneNode(true);
     loadPokemonIntoBlock(basePokemon.species.name,block)
-    parent.appendChild(block)
+    parent.appendChild(block);
 
     const branches = basePokemon.evolves_to.length
     if (branches == 0){
@@ -285,6 +284,8 @@ async function addBranch(parent, basePokemon,widthPercentage) {
 
         parent.appendChild(line);
     }
+
+    
 
     const newPercentage = space/100 *widthPercentage; 
     if (newPercentage < smallestWidthPercentage){
