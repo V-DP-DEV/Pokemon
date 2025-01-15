@@ -28,11 +28,12 @@ const defenseTable = document.getElementById("defense")
 const evoTreeDiv = document.getElementById("evoTree")
 
 //for defenseMap
-let defenseMap = new Map();
+//let defenseMap = new Map();
+
+let defenseMap = new Map([["normal",1],["fighting",1],["flying",1],["poison",1],["ground",1],["rock",1],["bug",1],["ghost",1],["steel",1],["fire",1],["water",1],["grass",1],["electric",1],["psychic",1],["ice",1],["dragon",1],["dark",1],["fairy",1],["stellar",1]]);
 const totalTypes = 18;
 
 //for evolution tree
-const heightOfBranch = 40;
 let smallestWidthPercentage = 100;
 
 //used for evo pokemon block
@@ -179,10 +180,6 @@ function addTypes(typesList,is_mythical,is_legendary){
 }
 
 async function addDefenseAgainstTypes(typesList){
-    const defenseTypesObj = await getData("https://pokeapi.co/api/v2/type/");
-    for (let i = 0; i < defenseTypesObj.results.length-1; i++){
-        defenseMap.set(defenseTypesObj.results[i].name,1)
-    }
     for (let i = 0; i <typesList.length ; i++) {
         const typeData = await getData(typesList[i].type.url);
         multiplyDefenses(typeData.damage_relations.double_damage_from,2);
@@ -195,22 +192,21 @@ async function addDefenseAgainstTypes(typesList){
     let row = defenseTable.insertRow();
     let row2 = defenseTable.insertRow();
 
-    for(let i = 0; i < defenseMap.size; i++){
+    for (let [key, value] of defenseMap) {
         if (totalColInRow == maxInARow){
             row = defense.insertRow();
             row2 = defense.insertRow();
             totalColInRow = 0
         }
-
-        let name = defenseTypesObj.results[i].name
+        
         let cell = row.insertCell();
-        cell.innerHTML = name.substr(0,3).toUpperCase()
+        cell.innerHTML = key.substr(0,3).toUpperCase()
         cell.classList.add("types");
-        cell.classList.add(name);
+        cell.classList.add(key);
         cell.style.textAlign = "center"
 
         let cell2 = row2.insertCell();
-        cell2.innerHTML = defenseMap.get(name);
+        cell2.innerHTML = value;
         cell2.style.textAlign = "center"
 
         totalColInRow++

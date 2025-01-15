@@ -10,13 +10,22 @@ let increment = 30;
 let totalPokemonLoaded = 0;
 let totalPokemonInGeneration;
 let firstIdInGeneration;
-const newGenerations = [1,152,252,387,494,650,722,810,906,1026]
-let totalGenerations = newGenerations.length;
+const generationsFirstId = [1,152,252,387,494,650,722,810,906,1026]
+let totalGenerations = generationsFirstId.length-1;
 
 let tempBlock = createDisplayBlock();
 let tempType = document.createElement("span");
 tempType.classList.add('types')
 
+main();
+
+async function main(){
+    createGenerationButtons();
+    await setDiscoveryGeneration(1);
+    await loadBatchPokemon();
+}
+
+//event listeners
 loadMoreButton.addEventListener("click",function(){
     loadBatchPokemon();
 })
@@ -32,14 +41,6 @@ searchButton.addEventListener("click", async function(){
     text = searchInput.value;
     window.location.href = 'info.html?id='+text.toLowerCase();
 });
-
-main();
-
-async function main(){
-    await setDiscoveryGeneration(1);
-    await loadBatchPokemon();
-    createGenerationButtons();
-}
 
 //CREATE DISPLAY BLOCK
 function createDisplayBlock(){
@@ -75,8 +76,8 @@ function  createGenerationButtons(){
 
 async function setDiscoveryGeneration(a){
     totalPokemonLoaded = 0;
-    totalPokemonInGeneration = newGenerations[a]-newGenerations[a-1]
-    firstIdInGeneration = newGenerations[a-1];
+    totalPokemonInGeneration = generationsFirstId[a]-generationsFirstId[a-1]
+    firstIdInGeneration = generationsFirstId[a-1];
     loadMoreButton.style.display = "block";
     generationHeader.innerHTML = "Generation " + a;
 }
@@ -102,8 +103,7 @@ async function loadBatchPokemon(){
 }
 
 async function loadPokemonIntoBlock(id, block){
-    const res2 = await fetch("https://pokeapi.co/api/v2/pokemon/"+(id));
-    currentPokemon = await res2.json();
+    const currentPokemon = await getPokemonData(id)
     block.children[0].src = currentPokemon.sprites.front_default;
     block.children[1].innerHTML = "#" + currentPokemon.id;
     block.children[2].innerHTML = currentPokemon.name;
