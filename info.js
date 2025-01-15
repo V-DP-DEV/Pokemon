@@ -1,13 +1,15 @@
 //add search pokemon to top//change the input box to a select element maybe?//do more error handling
+
+//all html elements
 const searchButton = document.getElementById("searchButton");
 const searchInput = document.getElementById("searchInput");
 
-const pokemonName = document.getElementById("pokemon");
-const description = document.getElementById("description");
-const weight = document.getElementById("weight");
-const height = document.getElementById("height");
-const generation = document.getElementById("generation");
-const types = document.getElementById("types");
+const pokemonNameSpan = document.getElementById("pokemon");
+const descriptionSpan = document.getElementById("description");
+const weightSpan = document.getElementById("weight");
+const heightSpan = document.getElementById("height");
+const generationSpan = document.getElementById("generation");
+const typesSpan = document.getElementById("types");
 const frontImg = document.getElementById("frontImage");
 const backImg = document.getElementById("backImage");
 
@@ -21,19 +23,19 @@ const genderlessLabel = breedingStats.rows[3].cells[1].children[2];
 
 const abilityTable = document.getElementById("ability_table");
 
-const defense = document.getElementById("defense")
+const defenseTable = document.getElementById("defense")
 
-const evoTree = document.getElementById("evoTree")
+const evoTreeDiv = document.getElementById("evoTree")
 
-let maleIntervalId;
-let shinyIntervalId;
-
+//for defenseMap
 let defenseMap = new Map();
 const totalTypes = 18;
 
+//for evolution tree
 const heightOfBranch = 40;
-let smallestWidthPercentage = 100; //in percentage
+let smallestWidthPercentage = 100;
 
+//used for evo pokemon block
 let tempBlock = document.createElement("div");
 tempBlock.classList.add("discoverBlock");
 let tempImg = document.createElement("img");
@@ -47,6 +49,7 @@ tempBlock.appendChild(tempName);
 tempBlock.appendChild(tempStr);
 tempBlock.appendChild(tempTypes);
 
+
 loadDataIntoElements(getQueryParm("id"))
 
 function getQueryParm(parm){
@@ -56,7 +59,6 @@ function getQueryParm(parm){
 
 searchButton.addEventListener("click", async function(){
     text = searchInput.value;
-    //loadDataIntoElements(text.toLowerCase());
     window.location.href = 'info.html?id='+text.toLowerCase();
 });
 
@@ -95,7 +97,6 @@ function extract(description){
 //DISPLAY DATA OF
 
 async function loadDataIntoElements(nameOrId){
-    //clearData();
     const obj = await getPokemonData(nameOrId);
     const obj2 = await getData("https://pokeapi.co/api/v2/pokemon-species/"+ obj.id+"/");
     console.log(obj);
@@ -106,14 +107,14 @@ async function loadDataIntoElements(nameOrId){
 
     let name = obj.species.name[0].toUpperCase()+obj.species.name.substr(1,obj.species.name.length);
 
-    pokemonName.innerHTML = name + " #"+obj.id;
-    description.innerHTML = "Description: "+ extract(obj2.flavor_text_entries[getEnglishStr(obj2.flavor_text_entries)].flavor_text);
-    weight.innerHTML = "Weight: "+ (obj.weight/10) + " kg";
-    height.innerHTML = "Height: " + (obj.height/10) + " m";
-    generation.innerHTML = "Added in " + obj2.generation.name
+    pokemonNameSpan.innerHTML = name + " #"+obj.id;
+    descriptionSpan.innerHTML = "Description: "+ extract(obj2.flavor_text_entries[getEnglishStr(obj2.flavor_text_entries)].flavor_text);
+    weightSpan.innerHTML = "Weight: "+ (obj.weight/10) + " kg";
+    heightSpan.innerHTML = "Height: " + (obj.height/10) + " m";
+    generationSpan.innerHTML = "Added in " + obj2.generation.name
     addTypes(obj.types,obj2.is_mythical,obj2.is_legendary)
-    maleIntervalId = rotateBetweenImages(obj.sprites.front_default,obj.sprites.front_shiny,frontImg)
-    shinyIntervalId =rotateBetweenImages(obj.sprites.back_default,obj.sprites.back_shiny,backImg)
+    rotateBetweenImages(obj.sprites.front_default,obj.sprites.front_shiny,frontImg)
+    rotateBetweenImages(obj.sprites.back_default,obj.sprites.back_shiny,backImg)
 
     //battle stats
     battleStats.rows[1].cells[1].innerHTML = obj.stats[0].base_stat
@@ -135,10 +136,6 @@ async function loadDataIntoElements(nameOrId){
 }
 
 function setGender(gender){
-    maleLabel.innerHTML = "";
-    femaleLabel.innerHTML = "";
-    genderlessLabel.innerHTML = "";
-
     if (gender == -1){
         genderlessLabel.innerHTML = "Genderless";
     }
@@ -165,24 +162,23 @@ function addTypes(typesList,is_mythical,is_legendary){
         let type = tempType.cloneNode(true);
         type.innerHTML = typesList[i].type.name;
         type.classList.add(typesList[i].type.name)
-        types.appendChild(type);
+        typesSpan.appendChild(type);
     }
     if(is_legendary){
         let type = tempType.cloneNode(true);
         type.innerHTML = "legendary";
         type.classList.add('legendary')
-        types.appendChild(type);
+        typesSpan.appendChild(type);
     }
     if(is_mythical){
         let type = tempType.cloneNode(true);
         type.innerHTML = "mythical";
         type.classList.add('mythical')
-        types.appendChild(type);
+        typesSpan.appendChild(type);
     }
 }
 
 async function addDefenseAgainstTypes(typesList){
-    defenseMap.clear();
     const defenseTypesObj = await getData("https://pokeapi.co/api/v2/type/");
     for (let i = 0; i < defenseTypesObj.results.length-1; i++){
         defenseMap.set(defenseTypesObj.results[i].name,1)
@@ -196,8 +192,8 @@ async function addDefenseAgainstTypes(typesList){
 
     let totalColInRow = 0;
     const maxInARow = 10;
-    let row = defense.insertRow();
-    let row2 = defense.insertRow();
+    let row = defenseTable.insertRow();
+    let row2 = defenseTable.insertRow();
 
     for(let i = 0; i < defenseMap.size; i++){
         if (totalColInRow == maxInARow){
@@ -256,14 +252,14 @@ async function createEvoTree(chainUrl){
         evoTree.parentNode.innerHTML = "This pokemon has no evolutions";
         return;
     }
-    addBranch(evoTree,evoChain.chain,100);
+    addBranch(evoTreeDiv,evoChain.chain,100);
     let totalWidth = 100*smallestWidth / smallestWidthPercentage;
 
     if (totalWidth > evoTree.parentElement.clientWidth){
-        evoTree.style.width = totalWidth+"px";
+        evoTreeDiv.style.width = totalWidth+"px";
     }
     else{
-        evoTree.style.width = "100%";
+        evoTreeDiv.style.width = "100%";
     }
 }
 
@@ -325,19 +321,6 @@ async function loadPokemonIntoBlock(id,block){
         currentType.innerHTML = currentPokemon.types[i].type.name;
         currentType.classList.add(currentPokemon.types[i].type.name)
         block.children[3].appendChild(currentType);
-    }
-}
-
-function clearData(){
-    let length = abilityTable.rows.length;
-    for(let i = 1; i < length; i++ ){abilityTable.deleteRow(1)}
-    if(maleIntervalId != null){clearInterval(maleIntervalId)}
-    if(shinyIntervalId != null){clearInterval(shinyIntervalId)}
-    types.innerHTML = "";
-    evoTree.innerHTML = ""
-    defense.innerHTML = "";
-    for (let [key,value] of defenseMap) {
-        defenseMap.set(key,1);
     }
 }
 

@@ -1,10 +1,10 @@
 const searchButton = document.getElementById("searchButton");
 const searchInput = document.getElementById("searchInput");
 
-const discovery = document.getElementById("discovery")
-const generation_picker = document.getElementById("generation_picker")
-const load_more = document.getElementById("load_more")
-const generation_header = document.getElementById("generation_header")
+const discovery= document.getElementById("discovery")
+const generationPickerBar = document.getElementById("generation_picker")
+const loadMoreButton = document.getElementById("load_more")
+const generationHeader = document.getElementById("generation_header")
 
 let increment = 30;
 let totalPokemonLoaded = 0;
@@ -16,7 +16,7 @@ let tempBlock = createDisplayBlock();
 let tempType = document.createElement("span");
 tempType.classList.add('types')
 
-load_more.addEventListener("click",function(){
+loadMoreButton.addEventListener("click",function(){
     loadBatchPokemon();
 })
 
@@ -71,7 +71,7 @@ function  createGenerationButtons(){
             setDiscoveryGeneration(i);
             loadBatchPokemon();
         })
-        generation_picker.appendChild(newLabel);
+        generationPickerBar.appendChild(newLabel);
     }
 }
 
@@ -92,8 +92,8 @@ async function setDiscoveryGeneration(a){
     totalPokemonLoaded = 0;
     totalPokemonInGeneration = generations[a]- generations[a-1];
     firstIdInGeneration = generations[a-1]+1;
-    load_more.style.display = "block";
-    generation_header.innerHTML = "Generation " + a;
+    loadMoreButton.style.display = "block";
+    generationHeader.innerHTML = "Generation " + a;
 }
 
 async function loadBatchPokemon(){
